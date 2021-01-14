@@ -56,12 +56,25 @@ public class VotoAS {
         }
 
         Associado associado = (Associado) repositoryAssociado.findId(votacao.getAssociado());
+        if (Objects.isNull(associado)) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Associado não identificado!");
+        }
+        
         Sessao sessao = (Sessao) repositorySessao.findId(votacao.getSessao());
-
+        if (Objects.isNull(sessao)) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Sessão não identificada!");
+        }
+        
         if (sessao.getFim().isBefore(LocalDateTime.ofInstant(Instant.now(), ZoneId.of("America/Sao_Paulo")))) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Sessão encerrada!");
         }
-
+        
+        Votacao validarVotacao = repository.associadoPauta(associado.getId(), sessao.getPauta().getId());
+        
+        if(Objects.nonNull(validarVotacao)){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não é possível votar duas vezes com o mesmo associado!");
+        }
+        
         Votacao voto = Votacao.builder().dataVoto(LocalDateTime.ofInstant(Instant.now(), ZoneId.of("America/Sao_Paulo"))).associado(associado).sessao(sessao).voto(votacao.getVoto()).build();
         return ResponseEntity.status(HttpStatus.OK).body(repository.save(voto));
     }

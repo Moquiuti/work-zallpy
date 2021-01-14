@@ -18,6 +18,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "votacao")
+@NamedQueries({
+    @NamedQuery(name = "Votacao.associadoPauta", query = "FROM Votacao WHERE associado.id = :p0 and sessao.pauta.id = :p1"),
+})
 public class Votacao implements Serializable {
 
     @Id
