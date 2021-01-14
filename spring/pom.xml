@@ -45,7 +45,6 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>9.4-1200-jdbc4</version>
         </dependency>
         
         <dependency>
@@ -64,7 +63,13 @@
                     <artifactId>junit-vintage-engine</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>        
+        </dependency>  
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>3.14.4</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
 
     <build>

@@ -1,7 +1,6 @@
 package br.com.zallpy.aplication.entidades;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,5 +28,8 @@ public class Associado implements Serializable {
 
     @Column(name = "nome", length = 250)
     private String nome;
+
+    @Column(name = "cpf", length = 11)
+    private String cpf;
 
 }

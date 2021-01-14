@@ -8,6 +8,7 @@ package br.com.zallpy.aplication.resources;
 import br.com.zallpy.aplication.as.VotoAS;
 import br.com.zallpy.aplication.entidades.Votacao;
 import br.com.zallpy.aplication.entidades.dto.VotacaoDTO;
+import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -31,7 +32,7 @@ public class VotoResource {
     private VotoAS votoService;
 
     @RequestMapping(value = "/voto", method = RequestMethod.POST)
-    public ResponseEntity<Votacao> create(@RequestBody VotacaoDTO voto) {
+    public ResponseEntity<Votacao> create(@RequestBody VotacaoDTO voto) throws IOException {
         return votoService.create(voto);
     }
 

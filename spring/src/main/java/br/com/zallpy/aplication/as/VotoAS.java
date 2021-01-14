@@ -12,11 +12,15 @@ import br.com.zallpy.aplication.entidades.dto.VotacaoDTO;
 import br.com.zallpy.aplication.repostory.AssociadoRepository;
 import br.com.zallpy.aplication.repostory.SessaoRepository;
 import br.com.zallpy.aplication.repostory.VotoRepository;
+import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Objects;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -42,7 +46,7 @@ public class VotoAS {
         this.repositorySessao = repositorySessao;
     }
 
-    public ResponseEntity create(VotacaoDTO votacao) {
+    public ResponseEntity create(VotacaoDTO votacao) throws IOException {
         if (votacao.getVoto().isEmpty()) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Informe seu voto!");
         }
@@ -76,6 +80,20 @@ public class VotoAS {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não é possível votar duas vezes com o mesmo associado!");
         }
 
+        /**
+         * Adicionado validação de CPF
+         */
+        OkHttpClient client = new OkHttpClient().newBuilder()
+                .build();
+        Request request = new Request.Builder()
+                .url("https://user-info.herokuapp.com/users/" + associado.getCpf())
+                .method("GET", null)
+                .build();
+        Response response = client.newCall(request).execute();
+        if(response.code() == 404){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("CPF inválido: " + response.message());
+        }
+        
         Votacao voto = Votacao.builder().dataVoto(LocalDateTime.ofInstant(Instant.now(), ZoneId.of("America/Sao_Paulo"))).associado(associado).sessao(sessao).voto(votacao.getVoto()).build();
         return ResponseEntity.status(HttpStatus.OK).body(repository.save(voto));
     }
@@ -85,7 +103,7 @@ public class VotoAS {
         if (Objects.isNull(votos) || votos.isEmpty()) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(0);
         }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(votos.size());
+        return ResponseEntity.status(HttpStatus.OK).body(votos.size());
     }
 
     public ResponseEntity<Integer> findNegado(Long sessao) {
@@ -93,6 +111,6 @@ public class VotoAS {
         if (Objects.isNull(votos) || votos.isEmpty()) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(0);
         }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(votos.size());
+        return ResponseEntity.status(HttpStatus.OK).body(votos.size());
     }
 }
