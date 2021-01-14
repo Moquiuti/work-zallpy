@@ -1,0 +1,46 @@
+version: "2"
+
+services:
+  postgres:
+    image: postgres    
+    container_name: postgres
+    environment:
+      POSTGRES_DB: "postgres"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgresql"
+    ports:
+      - "5432:5432"
+    #volumes:
+     # - ~/srv/PostgreSQL:/var/lib/postgresql/data 
+    networks:
+      - zallpy
+      
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "leandro.moquiuti@gmail.com"
+      PGADMIN_DEFAULT_PASSWORD: "postgresql"
+    ports:
+      - "16543:80"
+    depends_on:
+      - postgres
+    networks:
+      - zallpy
+
+  spring-api:
+    #image: spring:1.2
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/postgres
+    build:
+     context: ./spring
+     dockerfile: ./Dockerfile.spring
+    ports: 
+      - "8080:8080"
+    depends_on:
+      - postgres
+    networks:
+      - zallpy
+  
+networks:
+ zallpy:
+  driver: bridge
