@@ -15,6 +15,7 @@ import br.com.zallpy.aplication.repostory.VotoRepository;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.List;
 import java.util.Objects;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -59,23 +60,39 @@ public class VotoAS {
         if (Objects.isNull(associado)) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Associado não identificado!");
         }
-        
+
         Sessao sessao = (Sessao) repositorySessao.findId(votacao.getSessao());
         if (Objects.isNull(sessao)) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Sessão não identificada!");
         }
-        
+
         if (sessao.getFim().isBefore(LocalDateTime.ofInstant(Instant.now(), ZoneId.of("America/Sao_Paulo")))) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Sessão encerrada!");
         }
-        
+
         Votacao validarVotacao = repository.associadoPauta(associado.getId(), sessao.getPauta().getId());
-        
-        if(Objects.nonNull(validarVotacao)){
+
+        if (Objects.nonNull(validarVotacao)) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não é possível votar duas vezes com o mesmo associado!");
         }
-        
+
         Votacao voto = Votacao.builder().dataVoto(LocalDateTime.ofInstant(Instant.now(), ZoneId.of("America/Sao_Paulo"))).associado(associado).sessao(sessao).voto(votacao.getVoto()).build();
         return ResponseEntity.status(HttpStatus.OK).body(repository.save(voto));
+    }
+
+    public ResponseEntity<Integer> findFavoravel(Long sessao) {
+        List<Votacao> votos = repository.findfavoravel(sessao);
+        if (Objects.isNull(votos) || votos.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(0);
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(votos.size());
+    }
+
+    public ResponseEntity<Integer> findNegado(Long sessao) {
+        List<Votacao> votos = repository.findNegado(sessao);
+        if (Objects.isNull(votos) || votos.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(0);
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(votos.size());
     }
 }

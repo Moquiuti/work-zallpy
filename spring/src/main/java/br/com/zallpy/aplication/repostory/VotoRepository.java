@@ -6,6 +6,7 @@
 package br.com.zallpy.aplication.repostory;
 
 import br.com.zallpy.aplication.entidades.Votacao;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 
@@ -16,5 +17,10 @@ import org.springframework.data.repository.query.Param;
 public interface VotoRepository extends JpaRepository<Votacao, Long> {
 
     public Votacao associadoPauta(@Param("p0") Long id, @Param("p1") Long id0);
+
+    public List<Votacao> findfavoravel(@Param("p0") Long sessao);
+    
+    public List<Votacao> findNegado(@Param("p0") Long sessao);
+
 
 }

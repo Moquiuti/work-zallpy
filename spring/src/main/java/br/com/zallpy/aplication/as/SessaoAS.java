@@ -31,7 +31,7 @@ public class SessaoAS {
     public ResponseEntity create(Sessao sessao) {
         if (Objects.isNull(sessao.getFim())) {
             LocalDateTime dataHoraSP = LocalDateTime.ofInstant(Instant.now(), ZoneId.of("America/Sao_Paulo"));
-            sessao.setFim(dataHoraSP.plusMinutes(1));
+            sessao.setFim(dataHoraSP.plusMinutes(60));
         }
         if (Objects.isNull(sessao.getPauta())) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Informe a pauta da sessão!");

@@ -24,12 +24,6 @@ Na raiz do projeto(pasta work-zallpy), abrir o prompt e digitar o seguinte:
 docker-compose up
 ```
 
-pressionar enter e aguardar o ambiente ser preparado, quando finalizado, acessar pelo link: 
-
-```
-http://localhost:4200/
-```
-
 Ao acessar o link do pgadmin: 
 
 ```

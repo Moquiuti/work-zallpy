@@ -20,6 +20,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "votacao")
 @NamedQueries({
     @NamedQuery(name = "Votacao.associadoPauta", query = "FROM Votacao WHERE associado.id = :p0 and sessao.pauta.id = :p1"),
+    @NamedQuery(name = "Votacao.findfavoravel", query = "FROM Votacao WHERE sessao.pauta.id = :p0 and voto = 'Sim'"),
+    @NamedQuery(name = "Votacao.findNegado", query = "FROM Votacao WHERE sessao.pauta.id = :p0 and voto = 'Não'")
 })
 public class Votacao implements Serializable {
 
