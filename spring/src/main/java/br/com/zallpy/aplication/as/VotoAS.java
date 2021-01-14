@@ -83,17 +83,10 @@ public class VotoAS {
         /**
          * Adicionado validação de CPF
          */
-        OkHttpClient client = new OkHttpClient().newBuilder()
-                .build();
-        Request request = new Request.Builder()
-                .url("https://user-info.herokuapp.com/users/" + associado.getCpf())
-                .method("GET", null)
-                .build();
-        Response response = client.newCall(request).execute();
-        if(response.code() == 404){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("CPF inválido: " + response.message());
+        if (this.invalidoCPF(associado.getCpf())) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("CPF inválido!");
         }
-        
+
         Votacao voto = Votacao.builder().dataVoto(LocalDateTime.ofInstant(Instant.now(), ZoneId.of("America/Sao_Paulo"))).associado(associado).sessao(sessao).voto(votacao.getVoto()).build();
         return ResponseEntity.status(HttpStatus.OK).body(repository.save(voto));
     }
@@ -112,5 +105,19 @@ public class VotoAS {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(0);
         }
         return ResponseEntity.status(HttpStatus.OK).body(votos.size());
+    }
+
+    private Boolean invalidoCPF(String cpf) throws IOException {
+        OkHttpClient client = new OkHttpClient().newBuilder()
+                .build();
+        Request request = new Request.Builder()
+                .url("https://user-info.herokuapp.com/users/" + cpf)
+                .method("GET", null)
+                .build();
+        Response response = client.newCall(request).execute();
+        if (response.code() == 404) {
+            return true;
+        }
+        return false;
     }
 }
